@@ -2,16 +2,16 @@
 
 A small gem that adds #find and #all to a class to keep track of it's instances:
 
-a = A.new
-p A.all # => [#<A:0x00000100853d78>]
-b = A.new
-p A.all # => [#<A:0x00000100853d78>, #<A:0x00000100853be8>]
-p A.find(a.id) # => #<A:0x00000100853d78>
+  a = A.new
+  p A.all # => [#<A:0x00000100853d78>]
+  b = A.new
+  p A.all # => [#<A:0x00000100853d78>, #<A:0x00000100853be8>]
+  p A.find(a.id) # => #<A:0x00000100853d78>
 
 
-a = B.new('foo')
-p B.all # => [#<B:0x00000100853828 @name="foo">]
-b = B.new('bar')
-p B.all # => [#<B:0x00000100853828 @name="foo">, #<B:0x000001008536e8 @name="bar">]
-p B.find('foo') # => #<B:0x00000100853828 @name="foo">
+  a = B.new('foo')
+  p B.all # => [#<B:0x00000100853828 @name="foo">]
+  b = B.new('bar')
+  p B.all # => [#<B:0x00000100853828 @name="foo">, #<B:0x000001008536e8 @name="bar">]
+  p B.find('foo') # => #<B:0x00000100853828 @name="foo">
 
