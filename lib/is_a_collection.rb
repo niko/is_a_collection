@@ -1,6 +1,8 @@
 class Class
   
   def is_a_collection(id_method=:id)
+    id_method = id_method.to_sym
+    
     include InstanceMethods
     extend ClassMethods
     
