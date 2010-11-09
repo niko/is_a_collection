@@ -1,6 +1,6 @@
 == is_a_collection
 
-A small gem that adds #find and #all to a class to keep track of it's instances:
+A small gem that adds #find and #all to a class to keep track of its instances:
 
   a = A.new
   p A.all # => [#<A:0x00000100853d78>]
