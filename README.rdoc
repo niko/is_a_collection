@@ -1,0 +1,3 @@
+== is_a_collection
+
+A gem that provides...
