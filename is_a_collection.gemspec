@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-$:.unshift File.expand_path('../lib', __FILE__)
-
 Gem::Specification.new do |s|
   s.name         = 'is_a_collection'
   s.version      = '0.0.1'
@@ -11,9 +9,12 @@ Gem::Specification.new do |s|
   s.description  = 'A small gem that adds #find, #all and #destroy to a class to keep track of its instances.'
   s.summary      = s.description # for now
   
-  s.files        = `git ls-files app lib`.split("\n")
+  s.files        = Dir['lib/**/*.rb']
+  s.test_files   = Dir['spec/**/*_spec.rb']
+  
   s.platform     = Gem::Platform::RUBY
   s.require_path = 'lib'
   
+  s.rubyforge_project = 'nowarning'
   s.add_development_dependency 'rspec'
 end
