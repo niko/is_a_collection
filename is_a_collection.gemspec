@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name         = 'is_a_collection'
-  s.version      = '0.0.2'
+  s.version      = '0.0.3'
   s.authors      = ['Niko Dittmann']
   s.email        = 'mail@niko-dittmann.com'
   s.homepage     = 'http://github.com/niko/is_a_collection'
