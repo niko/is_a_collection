@@ -33,7 +33,7 @@ class Class
       __collection.values
     end
     def find(identifier)
-      @__collection[identifier]
+      __collection[identifier]
     end
   end
   

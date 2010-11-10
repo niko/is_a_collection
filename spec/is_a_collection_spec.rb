@@ -24,6 +24,10 @@ class B
   
 end
 
+class C
+  is_a_collection
+end
+
 describe "is_a_collection" do
   describe "#all" do
     describe "without any instances" do
@@ -47,6 +51,9 @@ describe "is_a_collection" do
     it "should return the instance by custom identifier" do
       b = B.new('foobar')
       B.find('foobar').should == b
+    end
+    it "should work without instances" do
+      C.find('bla')
     end
   end
   describe "#destroy" do
