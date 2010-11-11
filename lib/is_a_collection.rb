@@ -7,10 +7,10 @@ class Class
     extend ClassMethods
     
     define_method :add_to_collection do
-      self.class.__collection[send id_method] = self
+      self.class.__collection[__send__ id_method] = self
     end
     define_method :remove_from_collection do
-      self.class.__collection.delete(send id_method)
+      self.class.__collection.delete(__send__ id_method)
     end
   end
   
