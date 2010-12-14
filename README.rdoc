@@ -15,10 +15,10 @@ A small gem that adds #find and #all to a class to keep track of its instances:
   end
   
   a = A.new
-  p A.all             # => [#<A:0x00000100853d78>]
+  A.all             # => [#<A:0x00000101636170>]
   b = A.new
-  p A.all             # => [#<A:0x00000100853d78>, #<A:0x00000100853be8>]
-  p A.find(a.id)      # => #<A:0x00000100853d78>
+  A.all             # => [#<A:0x00000101636170>, #<A:0x00000101635c70>]
+  A.find(a.id)      # => #<A:0x00000101636170>
 
 As you can see: By default is_a_collection looks for an #id method and uses that for its index. But you can tell what method to use, #name in this example:
 
@@ -30,11 +30,19 @@ As you can see: By default is_a_collection looks for an #id method and uses that
       @name = name
       add_to_collection
     end
+    def destroy
+      remove_from_collection
+    end
   end
   
   a = B.new('foo')
-  p B.all             # => [#<B:0x00000100853828 @name="foo">]
+  B.all             # => [#<B:0x000001016351f8 @name="foo">]
   b = B.new('bar')
-  p B.all             # => [#<B:0x00000100853828 @name="foo">, #<B:0x000001008536e8 @name="bar">]
-  p B.find('foo')     # => #<B:0x00000100853828 @name="foo">
+  B.all             # => [#<B:0x000001016351f8 @name="foo">, #<B:0x00000101634c80 @name="bar">]
+  B.find('foo')     # => #<B:0x000001016351f8 @name="foo">
+  B.find('foo').destroy
+  B.all             # => [#<B:0x00000101634c80 @name="bar">]
+
+
+is_a_collection hooks itself into #initialize and #destroy, calls its own #add_to_collection respectivly #remove_from_collection there. This means, if you define #initialize or #destroy in your class (and not in one of its superclasses), you either have to explicitly call super (to give is_a_collection to do its work) or call #add_to_collection and #remove_from_collection yourself.
 
