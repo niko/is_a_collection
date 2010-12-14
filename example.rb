@@ -13,10 +13,12 @@ class A
 end
 
 a = A.new
-A.all             # => [#<A:0x00000101636170>]
+A.all             # => [#<A:0x00000101b9d668>]
 b = A.new
-A.all             # => [#<A:0x00000101636170>, #<A:0x00000101635c70>]
-A.find(a.id)      # => #<A:0x00000101636170>
+A.all             # => [#<A:0x00000101b9d668>, #<A:0x00000101b9ce48>]
+A.find(a.id)      # => #<A:0x00000101b9d668>
+a.destroy
+A.all             # => [#<A:0x00000101b9ce48>]
 
 class B
   attr_reader :name
@@ -32,9 +34,9 @@ class B
 end
 
 a = B.new('foo')
-B.all             # => [#<B:0x000001016351f8 @name="foo">]
+B.all             # => [#<B:0x00000101b9b778 @name="foo">]
 b = B.new('bar')
-B.all             # => [#<B:0x000001016351f8 @name="foo">, #<B:0x00000101634c80 @name="bar">]
-B.find('foo')     # => #<B:0x000001016351f8 @name="foo">
-B.find('foo').destroy
-B.all             # => [#<B:0x00000101634c80 @name="bar">]
+B.all             # => [#<B:0x00000101b9b778 @name="foo">, #<B:0x00000101b9b138 @name="bar">]
+B.find('foo')     # => #<B:0x00000101b9b778 @name="foo">
+a.destroy
+B.all             # => [#<B:0x00000101b9b138 @name="bar">]
