@@ -3,8 +3,8 @@ class Class
   def is_a_collection(id_method=:id)
     id_method = id_method.to_sym
     
-    include InstanceMethods
-    extend ClassMethods
+    include IsACollection::InstanceMethods
+    extend IsACollection::ClassMethods
     
     define_method :add_to_collection do
       self.class.__collection[__send__ id_method] = self
@@ -13,7 +13,9 @@ class Class
       self.class.__collection.delete(__send__ id_method)
     end
   end
-  
+end
+
+module IsACollection
   module InstanceMethods
     def initialize(*args, &block)
       super
@@ -36,5 +38,5 @@ class Class
       __collection[identifier]
     end
   end
-  
 end
+
