@@ -1,17 +1,40 @@
 == is_a_collection
 
 A small gem that adds #find and #all to a class to keep track of its instances:
-
+  
+  class A
+    is_a_collection
+    
+    def initialize(*args)
+      super
+    end
+    
+    def id
+      object_id
+    end
+  end
+  
   a = A.new
-  p A.all # => [#<A:0x00000100853d78>]
+  p A.all             # => [#<A:0x00000100853d78>]
   b = A.new
-  p A.all # => [#<A:0x00000100853d78>, #<A:0x00000100853be8>]
-  p A.find(a.id) # => #<A:0x00000100853d78>
+  p A.all             # => [#<A:0x00000100853d78>, #<A:0x00000100853be8>]
+  p A.find(a.id)      # => #<A:0x00000100853d78>
 
+As you can see: By default is_a_collection looks for an #id method and uses that for its index. But you can tell what method to use, #name in this example:
 
+  class B
+    attr_reader :name
+    is_a_collection :name
+    
+    def initialize(name)
+      @name = name
+      add_to_collection
+    end
+  end
+  
   a = B.new('foo')
-  p B.all # => [#<B:0x00000100853828 @name="foo">]
+  p B.all             # => [#<B:0x00000100853828 @name="foo">]
   b = B.new('bar')
-  p B.all # => [#<B:0x00000100853828 @name="foo">, #<B:0x000001008536e8 @name="bar">]
-  p B.find('foo') # => #<B:0x00000100853828 @name="foo">
+  p B.all             # => [#<B:0x00000100853828 @name="foo">, #<B:0x000001008536e8 @name="bar">]
+  p B.find('foo')     # => #<B:0x00000100853828 @name="foo">
 
