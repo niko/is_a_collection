@@ -28,6 +28,19 @@ class C
   is_a_collection
 end
 
+class Song
+  attr_reader :title, :genre
+  is_a_collection :title, :index => :genre
+  
+  def initialize(title, genre)
+    @title, @genre = title, genre
+    add_to_collection
+  end
+  def destroy
+    remove_from_collection
+  end
+end
+
 describe "is_a_collection" do
   describe "#all" do
     describe "without any instances" do
@@ -41,6 +54,12 @@ describe "is_a_collection" do
         a2 = A.new
         A.all.should == [a1,a2]
       end
+    end
+  end
+  describe "on primary key collision" do
+    it "raise an error" do
+      b1 = B.new('a key')
+      lambda{ B.new('a key') }.should raise_error(IsACollection::DuplicateKey)
     end
   end
   describe "#find" do
@@ -63,6 +82,32 @@ describe "is_a_collection" do
     it "should remove the instances" do
       @b.destroy
       B.find('doomed').should be_nil
+    end
+  end
+  describe "indices" do
+    after(:each) do
+      Song.clear_collection_indices
+    end
+    describe "on instance creation" do
+      it "adds instances to the index" do
+        s1 = Song.new 'some title', 'Rock'
+        s2 = Song.new 'some other title', 'Rock'
+        Song.find_by_genre('Rock').should include(s1)
+        Song.find_by_genre('Rock').should include(s2)
+      end
+      it "doesn't add instances to other indices" do
+        s1 = Song.new 'some title', 'Rock'
+        s2 = Song.new 'some other title', 'Pop'
+        Song.find_by_genre('Rock').should_not include(s2)
+      end
+    end
+    describe "on instance destruction" do
+      it "removes the instance from the index" do
+        s = Song.new 'some other title', 'Rock'
+        Song.find_by_genre('Rock').should include(s)
+        s.destroy
+        Song.find_by_genre('Rock').should_not include(s)
+      end
     end
   end
 end

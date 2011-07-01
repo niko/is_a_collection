@@ -1,5 +1,11 @@
 == is_a_collection
 
+=== API breaking change
+
+As of version 0.1.0 an error gets raise on primary key collision. For the reasons read the new Indices section below.
+
+=== Basics
+
 A small gem that adds #find and #all to a class to keep track of its instances:
   
   class A
@@ -22,7 +28,7 @@ A small gem that adds #find and #all to a class to keep track of its instances:
   a.destroy
   A.all             # => [#<A:0x00000101b9ce48>]
 
-As you can see: By default is_a_collection looks for an #id method and uses that for its index. But you can tell what method to use, #name in this example:
+As you can see: By default is_a_collection looks for an #id method and uses that as primary key for its index. But you can tell what method to use, #name in this example:
 
   class B
     attr_reader :name
@@ -48,6 +54,35 @@ As you can see: By default is_a_collection looks for an #id method and uses that
 
 is_a_collection hooks itself into #initialize and #destroy and calls its own #add_to_collection respectivly #remove_from_collection there. This means, if you define #initialize or #destroy in your class (and not in one of its superclasses), you either have to explicitly call super (to give is_a_collection a chance to do its work) or call #add_to_collection and #remove_from_collection yourself.
 
-== It doesn't work
+=== Indices
+
+As of the latest version is_a_collection supports arbitrary indices:
+
+  class Song
+    attr_reader :title, :genre
+    is_a_collection :title, :index => :genre
+    
+    def initialize(title, genre)
+      @title, @genre = title, genre
+      add_to_collection
+    end
+    def destroy
+      remove_from_collection
+    end
+  end
+
+With this genre index defined, all instances of Song get added to a reverse lookup index. You can get songs with the #find_by_genre instance method:
+
+  s1 = Song.new 'foobar', 'Rock'
+  s2 = Song.new 'foobaz', 'Rock'
+  s3 = Song.new 'fuu', 'Pop'
+  
+  Song.find_by_genre('Rock') # => #<Set: {#<Song:0x0000010103cf30 @genre="Rock", @title="foobar">, #<Song:0x0000010103cd00 @genre="Rock", @title="foobaz">}>
+
+==== The breaking change
+
+Before the index capabilities got added, a new instance with a primary key that was already present would just overwrite the other instance in the index. Now with the new index stuff, an instance can be references by the primary index and one or more other indices. If the primary index entry would be overridden as before, the other indices would still reference the first instance, but it would be hard to delete it afterwards. As this would lead to an object leak I decided the best solution is to raise an error on duplicate key entry.
+
+== It doesn't work?
 
 Did you call super in #initialize? Yes? I'm glad to help: Issues[https://github.com/niko/is_a_collection/issues]
