@@ -17,7 +17,7 @@ class Class
     
     define_method :add_to_collection do
       primary_key = __send__(id_method)
-      raise IsACollection::DuplicateKey if self.class.__collection[primary_key]
+      raise IsACollection::DuplicateKeyError if self.class.__collection[primary_key]
       self.class.__collection[primary_key] = self
       
       indices.each do |index|
@@ -43,7 +43,7 @@ class Class
 end
 
 module IsACollection
-  class DuplicateKey < StandardError; end
+  class DuplicateKeyError < StandardError; end
   
   module InstanceMethods
     def initialize(*args, &block)

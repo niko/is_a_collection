@@ -59,7 +59,7 @@ describe "is_a_collection" do
   describe "on primary key collision" do
     it "raise an error" do
       b1 = B.new('a key')
-      lambda{ B.new('a key') }.should raise_error(IsACollection::DuplicateKey)
+      lambda{ B.new('a key') }.should raise_error(IsACollection::DuplicateKeyError)
     end
   end
   describe "#find" do
