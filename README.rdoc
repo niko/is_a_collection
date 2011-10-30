@@ -58,7 +58,13 @@ As you can see: By default is_a_collection looks for an #id method and uses that
   a.destroy
   B.all.assert == [b]
 
-is_a_collection hooks itself into #initialize and #destroy and calls its own #add_to_collection respectivly #remove_from_collection there. This means, if you define #initialize or #destroy in your class (and not in one of its superclasses), you either have to explicitly call super (to give is_a_collection a chance to do its work) or call #add_to_collection and #remove_from_collection yourself.
+is_a_collection hooks itself into #initialize and #destroy and calls its own #add_to_collection respectivly #remove_from_collection there. This means, if you define #initialize or #destroy in your class (and not in one of its superclasses), you either have to explicitly call #super (to give is_a_collection a chance to do its work) or call #add_to_collection and #remove_from_collection yourself.
+
+==== Note to calling #super rubies other than 1.9.1 or 1.9.2.
+
+If Object is the superclass of the Class you're using is_a_collection in, be careful that Object#initialize has the arity 0. So make sure you call super without any arguments. As super implicitly passes all arguments, you may need to call it like this: super *[]. Directly using #add_to_collection may be more… intuitive.
+
+See http://www.ruby-forum.com/topic/330466 and http://redmine.ruby-lang.org/issues/show/2451 for more information.
 
 === Indices
 
