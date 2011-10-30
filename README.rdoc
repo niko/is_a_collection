@@ -3,10 +3,17 @@
 === API breaking change
 
 As of version 0.1.0 an error gets raise on primary key collision. For the reasons read the new Indices section below.
+As of version 0.1.1 the error is IsACollection::DuplicateKeyError, not IsACollection::DuplicateKey any more.
 
 === Basics
 
-A small gem that adds #find and #all to a class to keep track of its instances:
+A small gem that adds #find and #all to a class to keep track of its instances.
+  
+  module AE::Assert
+    alias :should :assert
+  end
+  
+  require 'is_a_collection'
   
   class A
     is_a_collection
@@ -21,14 +28,14 @@ A small gem that adds #find and #all to a class to keep track of its instances:
   end
   
   a = A.new
-  A.all             # => [#<A:0x00000101b9d668>]
+  A.all.assert == [a]
   b = A.new
-  A.all             # => [#<A:0x00000101b9d668>, #<A:0x00000101b9ce48>]
-  A.find(a.id)      # => #<A:0x00000101b9d668>
+  A.all.assert == [a,b]
+  A.find(a.id)
   a.destroy
-  A.all             # => [#<A:0x00000101b9ce48>]
-
-As you can see: By default is_a_collection looks for an #id method and uses that as primary key for its index. But you can tell what method to use, #name in this example:
+  A.all.should == [b]
+  
+As you can see: By default is_a_collection looks for an #id method and uses that as primary key for its index. But you can tell what method to use, #name in this example.
 
   class B
     attr_reader :name
@@ -44,19 +51,18 @@ As you can see: By default is_a_collection looks for an #id method and uses that
   end
   
   a = B.new('foo')
-  B.all             # => [#<B:0x00000101b9b778 @name="foo">]
+  B.all.assert == [a]
   b = B.new('bar')
-  B.all             # => [#<B:0x00000101b9b778 @name="foo">, #<B:0x00000101b9b138 @name="bar">]
-  B.find('foo')     # => #<B:0x00000101b9b778 @name="foo">
+  B.all.assert == [a,b]
+  B.find('foo')
   a.destroy
-  B.all             # => [#<B:0x00000101b9b138 @name="bar">]
-
+  B.all.assert == [b]
 
 is_a_collection hooks itself into #initialize and #destroy and calls its own #add_to_collection respectivly #remove_from_collection there. This means, if you define #initialize or #destroy in your class (and not in one of its superclasses), you either have to explicitly call super (to give is_a_collection a chance to do its work) or call #add_to_collection and #remove_from_collection yourself.
 
 === Indices
 
-As of the latest version is_a_collection supports arbitrary indices:
+As of the latest version is_a_collection supports arbitrary indices.
 
   class Song
     attr_reader :title, :genre
@@ -71,13 +77,13 @@ As of the latest version is_a_collection supports arbitrary indices:
     end
   end
 
-With this genre index defined, all instances of Song get added to a reverse lookup index. You can get songs with the #find_by_genre instance method:
+With this genre index defined, all instances of Song get added to a reverse lookup index. You can get songs with the #find_by_genre instance method.
 
   s1 = Song.new 'foobar', 'Rock'
   s2 = Song.new 'foobaz', 'Rock'
   s3 = Song.new 'fuu', 'Pop'
   
-  Song.find_by_genre('Rock') # => #<Set: {#<Song:0x0000010103cf30 @genre="Rock", @title="foobar">, #<Song:0x0000010103cd00 @genre="Rock", @title="foobaz">}>
+  Song.find_by_genre('Rock').to_a.assert == [s1,s2]
 
 ==== The breaking change
 
@@ -86,3 +92,7 @@ Before the index capabilities got added, a new instance with a primary key that 
 == It doesn't work?
 
 Did you call super in #initialize? Yes? I'm glad to help: Issues[https://github.com/niko/is_a_collection/issues]
+
+== QED
+
+You can run this documentation with QED[https://github.com/rubyworks/qed]
